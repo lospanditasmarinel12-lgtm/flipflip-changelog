@@ -420,6 +420,42 @@
         dlContent().innerHTML = head + toyBanner + guides;
       }
 
+      function renderKnownTab() {
+        var head = '<div class="dl-head"><h1>Known Issues &amp; Bugs</h1><p>Open issues, limitations and rougher edges people should know about. Everything listed here is being tracked and improved over time.</p></div>';
+        var groups = [
+          {
+            title: 'Reported — under investigation',
+            items: [
+              'Media optimizer: occasionally fails to convert some files on import (large HDR/HEIC camera files or unusual codecs). The original file is not lost — convert it externally and re-import, or play the file directly.',
+              'Bluetooth connectivity is still flaky: pairing on first scan can fail, and a device occasionally drops mid-session and needs a reconnect. Auto re-scan, heartbeats and a watchdog timeout reduce this, but it is not 100% reliable yet. Haptics have only been tested with vibrating toys.'
+            ]
+          },
+          {
+            title: 'Performance &amp; engineering',
+            items: [
+              'Scene generation with very large libraries can briefly block the UI for a second or two (offloading this to a worker is planned).',
+              'A few <code>@mui/styles</code> leftovers remain in the Electron branch — developer debt only, no user-facing impact.'
+            ]
+          },
+          {
+            title: 'Platform limitations',
+            items: [
+              '<b>iOS:</b> system-audio capture only works while a screen Broadcast is running from Control Center (Apple restricts silent capture); the sideloaded build must be re-signed roughly every 7 days.',
+              '<b>macOS:</b> system audio requires BlackHole 2ch and the Microphone permission for FlipFlip; right after installing BlackHole a reboot (or <code>sudo killall coreaudiod</code>) may be required.',
+              '<b>Android:</b> the Visualizer can miss apps that play audio around the output mix — use the MediaProjection capture option for those apps.',
+              '<b>Linux:</b> some distributions need <code>libfuse2</code> installed before the AppImage will run.'
+            ]
+          }
+        ];
+        var guides = '<div class="guides">' + groups.map(function (g) {
+          var lis = g.items.map(function (i) { return '<li>' + i + '</li>'; }).join('');
+          return '<div class="guide"><h3>' + g.title + '</h3><ul>' + lis + '</ul></div>';
+        }).join('') + '</div>';
+        var report = '<p style="margin-top:18px">Found something not listed here? '
+          + '<a href="' + base + '/issues" target="_blank" rel="noopener">Report an issue on GitHub</a>.</p>';
+        dlContent().innerHTML = head + guides + report;
+      }
+
       function renderDownloadsView() {
         dlBtn.classList.add('active');
         statusEl.hidden = true;
@@ -429,9 +465,10 @@
         downloadsEl.innerHTML = '<div class="tabs">'
           + '<button class="tab' + (dlTab === 'download' ? ' active' : '') + '" data-dl="download">Downloads</button>'
           + '<button class="tab' + (dlTab === 'install' ? ' active' : '') + '" data-dl="install">Install &amp; Use</button>'
+          + '<button class="tab' + (dlTab === 'known' ? ' active' : '') + '" data-dl="known">Known Issues</button>'
           + '</div>'
           + '<div id="dl-content"></div>';
-        (dlTab === 'download' ? renderDownloadsTab : renderInstallTab)();
+        (dlTab === 'download' ? renderDownloadsTab : (dlTab === 'install' ? renderInstallTab : renderKnownTab))();
         if (!releaseData) fetchReleaseData();
       }
 

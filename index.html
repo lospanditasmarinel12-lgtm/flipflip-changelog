@@ -352,7 +352,7 @@
         var head = '<div class="dl-head"><h1>Install & Use</h1><p>Step-by-step installation and setup for each platform.</p></div>';
         var guides = '<div class="guides">' + PLATFORMS.map(function (p) {
           var steps = '<ol>' + p.steps.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>';
-          var note = p.note ? '<div class="' + (p.os === 'macOS' || p.os === 'macOS utility' || p.os === 'iOS' ? 'note' : 'warn') + '">' + p.note + '</div>' : '';
+          var note = p.note ? '<div class="' + (p.os === 'macOS' || p.os === 'iOS' ? 'note' : 'warn') + '">' + p.note + '</div>' : '';
           return '<div class="guide">'
             + '<div class="os">' + esc(p.os) + '</div>'
             + '<h3>' + esc(p.title) + '</h3>'

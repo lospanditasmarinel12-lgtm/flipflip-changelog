@@ -151,7 +151,39 @@
     .guide code, .post code { background: rgba(110,118,129,.2); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
     .guide .note { border-left: 3px solid var(--accent); background: rgba(88,166,255,.08); padding: 8px 12px; border-radius: 0 6px 6px 0; font-size: 13.5px; color: var(--text); }
     .guide .warn { border-left: 3px solid #d29922; background: rgba(210,153,34,.10); padding: 8px 12px; border-radius: 0 6px 6px 0; font-size: 13.5px; }
-    .guide .dl-line { margin-top: 8px; }
+
+    .toy-banner {
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+      margin: 0 0 18px; padding: 11px 16px;
+      border: 1px solid var(--border); border-left: 3px solid var(--accent-2);
+      background: rgba(46,160,67,.10); border-radius: 8px; font-size: 14px;
+    }
+    .toy-banner a { font-weight: 700; }
+
+    /* Beta / AS-IS download modal */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(1, 4, 9, .72);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay[hidden] { display: none; }
+    .modal {
+      width: min(560px, 100%); max-height: 90vh; overflow-y: auto;
+      background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+      padding: 22px 24px;
+    }
+    .modal h3 { margin: 0 0 10px; font-size: 19px; }
+    .modal p { margin: 0 0 10px; }
+    .modal .warnbox {
+      border-left: 3px solid #d29922; background: rgba(210,153,34,.10);
+      padding: 9px 12px; border-radius: 0 6px 6px 0; margin: 12px 0;
+    }
+    .modal label.adult { display: flex; align-items: center; gap: 8px; margin: 14px 0 4px; font-weight: 700; cursor: pointer; }
+    .modal input[type=checkbox] { width: 17px; height: 17px; accent-color: var(--accent-2); cursor: pointer; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+    .modal-actions .btn { border: 1px solid var(--accent); color: var(--accent); background: transparent; padding: 8px 18px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; }
+    .modal-actions .btn.primary { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+    .modal-actions .btn[disabled], .modal-actions .btn.primary[disabled] { opacity: .45; cursor: not-allowed; filter: none; }
 
     @media (max-width: 760px) {
       .body { grid-template-columns: 1fr; }
@@ -192,6 +224,29 @@
       <div id="actions" class="meta-actions" hidden></div>
       <div id="downloads" hidden></div>
     </main>
+  </div>
+
+  <!-- Beta / AS-IS download disclaimer modal -->
+  <div id="dl-modal" class="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dl-modal-title">
+      <h3 id="dl-modal-title">Beta build — download at your discretion</h3>
+      <p>This build is still in <b>beta</b>. The files are provided <b>AS IS</b> — you are
+      responsible for how you use them and for any misuse, side effects, or problems that may
+      result from sideloading or installing them.</p>
+      <div class="warnbox">
+        Haptic feedback has <b>only been tested with a vibrating toy</b>. Devices such as
+        <b>thrusting toys, strokers, and electric-shock devices have not been tested</b> — if
+        you use them, you do so entirely <b>at your own risk</b>.
+      </div>
+      <label class="adult">
+        <input type="checkbox" id="adult-check">
+        I am an adult (18+)
+      </label>
+      <div class="modal-actions">
+        <button id="dl-cancel" class="btn">Cancel</button>
+        <button id="dl-confirm" class="btn primary" disabled>Download</button>
+      </div>
+    </div>
   </div>
 
   <script src="marked.min.js"></script>
@@ -314,7 +369,7 @@
       function cardButtons(p) {
         return p.buttons.map(function (b) {
           var size = releaseData && releaseData.assets[b.file] ? ' · ' + fmtSize(releaseData.assets[b.file]) : '';
-          return '<a class="btn primary" href="' + downloadBase + '/' + encodeURIComponent(b.file) +
+          return '<a class="btn primary" data-file="' + esc(b.file) + '" href="' + downloadBase + '/' + encodeURIComponent(b.file) +
                  '" target="_blank" rel="noopener">Download ' + esc(b.label) + size + '</a>';
         }).join('');
       }
@@ -350,6 +405,9 @@
 
       function renderInstallTab() {
         var head = '<div class="dl-head"><h1>Install & Use</h1><p>Step-by-step installation and setup for each platform.</p></div>';
+        var toyBanner = '<div class="toy-banner">Want to check if your toy is supported? See the Buttplug-compatible device index — '
+          + '<a href="https://iostindex.com/?filter0Availability=Available,DIY&filter1Connection=Digital" target="_blank" rel="noopener noreferrer">iostindex.com</a> '
+          + '(filters: Available · DIY · Digital).</div>';
         var guides = '<div class="guides">' + PLATFORMS.map(function (p) {
           var steps = '<ol>' + p.steps.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>';
           var note = p.note ? '<div class="' + (p.os === 'macOS' || p.os === 'iOS' ? 'note' : 'warn') + '">' + p.note + '</div>' : '';
@@ -357,10 +415,9 @@
             + '<div class="os">' + esc(p.os) + '</div>'
             + '<h3>' + esc(p.title) + '</h3>'
             + steps + note
-            + '<div class="dl-line">' + cardButtons(p) + '</div>'
             + '</div>';
         }).join('') + '</div>';
-        dlContent().innerHTML = head + guides;
+        dlContent().innerHTML = head + toyBanner + guides;
       }
 
       function renderDownloadsView() {
@@ -383,6 +440,57 @@
         if (!t || !t.dataset.dl || t.dataset.dl === dlTab) return;
         dlTab = t.dataset.dl;
         renderDownloadsView();
+      });
+
+      // ---- beta / AS-IS download modal ----
+      var dlModal = document.getElementById('dl-modal');
+      var adultCheck = document.getElementById('adult-check');
+      var dlConfirm = document.getElementById('dl-confirm');
+      var dlCancel = document.getElementById('dl-cancel');
+      var pendingDownload = null;
+
+      function openDownloadModal(url) {
+        pendingDownload = url;
+        adultCheck.checked = false;
+        dlConfirm.disabled = true;
+        dlModal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        adultCheck.focus();
+      }
+
+      function closeDownloadModal() {
+        pendingDownload = null;
+        dlModal.hidden = true;
+        document.body.style.overflow = '';
+      }
+
+      adultCheck.addEventListener('change', function () {
+        dlConfirm.disabled = !adultCheck.checked;
+      });
+
+      dlConfirm.addEventListener('click', function () {
+        if (!adultCheck.checked || !pendingDownload) return;
+        var href = pendingDownload;
+        closeDownloadModal();
+        window.open(href, '_blank', 'noopener');
+      });
+
+      dlCancel.addEventListener('click', closeDownloadModal);
+
+      dlModal.addEventListener('click', function (e) {
+        if (e.target === dlModal) closeDownloadModal();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !dlModal.hidden) closeDownloadModal();
+      });
+
+      // Intercept every download button: show the disclaimer, then start the download.
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a.btn.primary[data-file]') : null;
+        if (!a) return;
+        e.preventDefault();
+        openDownloadModal(a.href);
       });
 
       function fetchReleaseData() {

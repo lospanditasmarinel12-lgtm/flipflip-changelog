@@ -1,0 +1,14 @@
+# Never commit binaries to this repo.
+# They belong ONLY in GitHub Releases (attach via: gh release create TAG ...).
+# The GitHub Pages deploy uploads this whole folder, so big files would
+# bloat deploys and git itself rejects anything over 100 MB.
+*.zip
+*.apk
+*.aab
+*.ipa
+*.AppImage
+*.dmg
+*.exe
+
+# Local / OS noise
+.DS_Store

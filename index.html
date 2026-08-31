@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Changelog FlipFlip+</title>
-  <meta name="description" content="Changelog site for FlipFlip — every upgrade, fix and new feature, tracked per version.">
+  <meta name="description" content="Changelog site for FlipFlip — every upgrade, fix and new feature, plus downloads and install guides for every platform.">
   <link rel="stylesheet" href="github-markdown.min.css">
   <style>
     :root {
@@ -14,6 +14,7 @@
       --text: #e6edf3;
       --muted: #8b949e;
       --accent: #58a6ff;
+      --accent-2: #2ea043;
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
@@ -35,8 +36,16 @@
     }
     .brand { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
     .brand span { color: var(--accent); }
+    .header-right { display: flex; align-items: center; gap: 14px; }
+    #download-btn {
+      display: inline-block; padding: 7px 18px; border-radius: 6px;
+      background: var(--accent-2); color: #fff; font-weight: 700; font-size: 14px;
+      border: 1px solid transparent; white-space: nowrap;
+    }
+    #download-btn:hover { filter: brightness(1.1); text-decoration: none; }
+    #download-btn.active { outline: 2px solid var(--accent); }
     #filter {
-      width: min(320px, 50vw);
+      width: min(280px, 40vw);
       padding: 7px 12px;
       border-radius: 6px;
       border: 1px solid var(--border);
@@ -47,13 +56,13 @@
     #filter:focus { outline: none; border-color: var(--accent); }
 
     .body { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100% - 57px); }
-
     aside {
       border-right: 1px solid var(--border);
       padding: 16px 12px;
       overflow-y: auto;
       background: var(--panel);
     }
+    .aside-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin: 4px 12px 8px; }
     .post-link {
       display: block; padding: 9px 12px; margin-bottom: 6px;
       border-radius: 6px; border: 1px solid transparent;
@@ -62,9 +71,16 @@
     .post-link:hover { background: var(--bg); text-decoration: none; border-color: var(--border); }
     .post-link.active { background: var(--bg); border-color: var(--accent); }
     .post-link small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .nav-link {
+      display: block; padding: 9px 12px; margin-bottom: 6px;
+      border-radius: 6px; border: 1px solid transparent;
+      color: var(--text); font-size: 14px; font-weight: 700;
+    }
+    .nav-link:hover { background: var(--bg); text-decoration: none; border-color: var(--border); }
+    .nav-link.active { background: var(--bg); border-color: var(--accent); }
     .empty { color: var(--muted); font-size: 13px; padding: 8px 12px; }
 
-    main { padding: 28px; max-width: 960px; width: 100%; margin: 0 auto; }
+    main { padding: 28px; max-width: 1000px; width: 100%; margin: 0 auto; }
     #content.markdown-body { background: transparent; padding: 0; color: var(--text); }
     .meta-actions {
       display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
@@ -74,11 +90,61 @@
     .pill { border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; }
     #status { color: var(--muted); }
 
+    /* ---- Downloads view ---- */
+    .dl-head { margin-bottom: 20px; }
+    .dl-head h1 { margin: 0 0 4px; font-size: 26px; }
+    .dl-head p { margin: 0; color: var(--muted); }
+    .tabs { display: flex; gap: 8px; margin: 18px 0; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .tab {
+      padding: 7px 18px; border-radius: 6px; border: 1px solid var(--border);
+      background: transparent; color: var(--text); font-size: 14px; font-weight: 700; cursor: pointer;
+    }
+    .tab:hover { border-color: var(--accent); }
+    .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px 18px; display: flex; flex-direction: column;
+    }
+    .card .os { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700; }
+    .card h3 { margin: 4px 0 2px; font-size: 17px; }
+    .card .sub { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+    .card .meta { color: var(--muted); font-size: 12px; margin: 6px 0 12px; }
+    .card .btns { margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer;
+      border: 1px solid var(--accent); color: var(--accent); background: transparent;
+    }
+    .btn:hover { background: rgba(88,166,255,.12); text-decoration: none; }
+    .btn.primary { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+    .btn.primary:hover { filter: brightness(1.1); background: var(--accent-2); }
+    .release-bar {
+      margin: 18px 0 22px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--panel); display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    }
+    .release-bar b { font-size: 16px; }
+    .release-bar .muted { color: var(--muted); }
+    .release-bar .spacer { flex: 1; }
+
+    .guides { display: flex; flex-direction: column; gap: 14px; }
+    .guide { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+    .guide h3 { margin: 0 0 8px; font-size: 17px; }
+    .guide .os { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700; }
+    .guide ol, .guide ul { margin: 8px 0 12px; padding-left: 22px; }
+    .guide li { margin: 6px 0; }
+    .guide code, .post code { background: rgba(110,118,129,.2); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+    .guide .note { border-left: 3px solid var(--accent); background: rgba(88,166,255,.08); padding: 8px 12px; border-radius: 0 6px 6px 0; font-size: 13.5px; color: var(--text); }
+    .guide .warn { border-left: 3px solid #d29922; background: rgba(210,153,34,.10); padding: 8px 12px; border-radius: 0 6px 6px 0; font-size: 13.5px; }
+    .guide .dl-line { margin-top: 8px; }
+
     @media (max-width: 760px) {
       .body { grid-template-columns: 1fr; }
       aside { border-right: none; border-bottom: 1px solid var(--border); max-height: 30vh; overflow-y: auto; }
-      #filter { width: 45vw; }
+      #filter { width: 44vw; }
+      header { flex-wrap: wrap; }
       main { padding: 18px 14px; }
+      .cards { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -86,7 +152,10 @@
 
   <header>
     <div class="brand">Changelog <span>FlipFlip+</span></div>
-    <input id="filter" type="search" placeholder="Filter posts…" autocomplete="off" aria-label="Filter posts">
+    <div class="header-right">
+      <a id="download-btn" href="#/downloads">&#8681; Download</a>
+      <input id="filter" type="search" placeholder="Filter posts…" autocomplete="off" aria-label="Filter posts">
+    </div>
   </header>
 
   <div class="body">
@@ -96,6 +165,7 @@
       <div id="status">Loading manifest…</div>
       <article id="content" class="markdown-body" hidden></article>
       <div id="actions" class="meta-actions" hidden></div>
+      <div id="downloads" hidden></div>
     </main>
   </div>
 
@@ -106,6 +176,8 @@
       var user = location.hostname.split('.')[0];
       var pathParts = location.pathname.split('/').filter(Boolean);
       var repo = pathParts.length ? pathParts[0] : 'flipflip-changelog';
+      var base = 'https://github.com/' + user + '/' + repo;
+      var downloadBase = base + '/releases/latest/download';
 
       // ---- safe rendering: no raw HTML from posts ----
       var renderer = new marked.Renderer();
@@ -119,26 +191,185 @@
       var statusEl = document.getElementById('status');
       var contentEl = document.getElementById('content');
       var actionsEl = document.getElementById('actions');
+      var downloadsEl = document.getElementById('downloads');
       var filterEl = document.getElementById('filter');
+      var dlBtn = document.getElementById('download-btn');
 
       var posts = [];
       var current = null;
+      var dlTab = 'download';
 
+      // ---- platform data (download buttons + install guides) ----
+      var PLATFORMS = [
+        {
+          id: 'macos', os: 'macOS', title: 'macOS', sub: 'FlipFlip.app',
+          buttons: [
+            { label: 'Apple Silicon (arm64)', file: 'FlipFlip-macOS-arm64.zip' },
+            { label: 'Intel (x64)', file: 'FlipFlip-macOS-x64.zip' }
+          ],
+          steps: [
+            'Download the build for your Mac: Apple Silicon (M1/M2/M3/M4) or Intel.',
+            'Unzip the archive and drag <code>FlipFlip.app</code> into <code>Applications</code>.',
+            'First launch: <b>right-click the app and choose Open</b> instead of double-clicking (the app is ad-hoc signed, so Gatekeeper shows a warning the first time).',
+            'Optional — haptics on system audio: see the note below.'
+          ],
+          note: 'Why the Audio-Setup helper exists: macOS does not allow an app to silently capture system audio. For System-audio haptics, FlipFlip routes system output through the free <b>BlackHole 2ch</b> virtual driver, then plays it back to your speakers through a "FlipFlip Multi-Output" device. Install <code>brew install blackhole-2ch</code> (or the installer from existentialaudio.com/blackhole), download and run the <b>Audio-Setup</b> helper once (it checks BlackHole and creates "FlipFlip Multi-Output"), then set Audio Source = System Audio in FlipFlip. Toggle it off and normal output resumes. Regular music playback needs none of this.'
+        },
+        {
+          id: 'windows', os: 'Windows', title: 'Windows', sub: 'Portable — no installer',
+          buttons: [ { label: 'Windows x64', file: 'FlipFlip-Windows-x64.zip' } ],
+          steps: [
+            'Download <code>FlipFlip-Windows-x64.zip</code>.',
+            'Extract the archive to any folder (for example <code>C:\\FlipFlip</code>).',
+            'Run <code>FlipFlip.exe</code>. Optionally right-click it → Pin to Start or create a shortcut.',
+            'System-audio haptics are built in (WASAPI loopback) — no extra driver or helper needed.'
+          ],
+          note: 'Requires Windows 10 or 11 (64-bit).'
+        },
+        {
+          id: 'linux', os: 'Linux', title: 'Linux', sub: 'AppImage — good to go',
+          buttons: [ { label: 'x86_64 AppImage', file: 'FlipFlip-Linux-x86_64.AppImage' } ],
+          steps: [
+            'Download <code>FlipFlip-Linux-x86_64.AppImage</code>.',
+            'Make it executable and run it: <code>chmod +x FlipFlip-Linux-x86_64.AppImage</code>, then <code>./FlipFlip-Linux-x86_64.AppImage</code> (or right-click → Properties → Allow executing file as program).',
+            'No installation needed — it runs straight away.'
+          ],
+          note: 'If the app fails to start on Debian/Ubuntu, install <code>libfuse2</code> (<code>sudo apt install libfuse2</code>) or run with <code>--appimage-extract-and-run</code>. System-audio haptics use PipeWire/PulseAudio monitors — no extra software required.'
+        },
+        {
+          id: 'android', os: 'Android', title: 'Android', sub: 'Signed release APK',
+          buttons: [ { label: 'APK', file: 'FlipFlip-Android.apk' } ],
+          steps: [
+            'Download <code>FlipFlip-Android.apk</code>.',
+            'Open the file (from Downloads or Files) — the system asks you to allow installing unknown apps; approve it.',
+            'Launch FlipFlip and grant <code>RECORD_AUDIO</code> only if you enable the Visualizer system-audio haptics option.'
+          ],
+          note: 'This is the signed release APK, ready to sideload. A Google Play (AAB) build is planned for a future release.'
+        },
+        {
+          id: 'ios', os: 'iOS', title: 'iOS', sub: 'Development-signed IPA',
+          buttons: [ { label: 'IPA', file: 'FlipFlip-iOS.ipa' } ],
+          steps: [
+            'Download <code>FlipFlip-iOS.ipa</code>.',
+            'Sideload it — there is no App Store build yet. Use <b>AltStore</b>, <b>Sideloadly</b> (macOS/Windows) or <b>Feather</b>.',
+            'The tool re-signs the IPA with your own Apple ID: connect your iPhone, add the .ipa, install it.',
+            'For System-audio haptics, start a screen Broadcast from Control Center (ReplayKit) as FlipFlip asks.'
+          ],
+          note: 'Because the IPA is development-signed, sideloaders re-sign it with your Apple ID. With services like Sideloadly/AltStore you may need to re-install every 7 days. The ReplayKit Broadcast extension shows the red recording banner while active.'
+        },
+        {
+          id: 'audio', os: 'macOS utility', title: 'Audio-Setup', sub: 'One-time system-audio helper',
+          buttons: [ { label: 'Helper', file: 'FlipFlip-Audio-Setup-macOS.zip' } ],
+          steps: [
+            'Download <code>FlipFlip-Audio-Setup-macOS.zip</code>.',
+            'Install <b>BlackHole 2ch</b> first (<code>brew install blackhole-2ch</code> or the installer from existentialaudio.com/blackhole).',
+            'Unzip the archive and run <code>FlipFlip-Audio-Setup.command</code> — it checks for BlackHole and creates the "FlipFlip Multi-Output" device.',
+            'Then in FlipFlip choose Audio Source = System Audio. Turn it off to restore normal output.'
+          ]
+        }
+      ];
+
+      // ---- helpers ----
+      function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+      function fmtSize(bytes) {
+        if (!bytes) return '';
+        var u = ['B', 'KB', 'MB', 'GB'], i = 0, n = bytes;
+        while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+        return n.toFixed(i ? 1 : 0) + ' ' + u[i];
+      }
+      function fmtDate(iso) {
+        if (!iso) return '';
+        var d = new Date(iso);
+        return isNaN(d) ? '' : d.toISOString().slice(0, 10);
+      }
+
+      var releaseData = null; // { tag, publishedAt, assets: {name: size} }
+
+      // ---- downloads / install rendering ----
+      function cardButtons(p) {
+        return p.buttons.map(function (b) {
+          var size = releaseData && releaseData.assets[b.file] ? ' · ' + fmtSize(releaseData.assets[b.file]) : '';
+          return '<a class="btn primary" href="' + downloadBase + '/' + encodeURIComponent(b.file) +
+                 '" target="_blank" rel="noopener">Download ' + esc(b.label) + size + '</a>';
+        }).join('');
+      }
+
+      function renderDownloadsTab() {
+        var head = '<div class="dl-head"><h1>Downloads</h1><p>Latest release for every platform. All files are hosted in the GitHub Releases of this repository — every version stays available.</p></div>';
+        var bar = '<div class="release-bar"><b>Latest release:</b> <span>'
+          + (releaseData ? esc(releaseData.tag) + ' <span class="muted">· published ' + fmtDate(releaseData.publishedAt) + '</span>' : 'Loading…')
+          + '</span><span class="spacer"></span><a class="btn" href="' + base + '/releases" target="_blank" rel="noopener">All releases</a></div>';
+        var cards = '<div class="cards">' + PLATFORMS.map(function (p) {
+          return '<div class="card">'
+            + '<div class="os">' + esc(p.os) + '</div>'
+            + '<h3>' + esc(p.title) + '</h3>'
+            + '<div class="sub">' + esc(p.sub) + '</div>'
+            + '<div class="meta">' + esc(p.buttons.map(function (b) { return b.label; }).join(' + ')) + '</div>'
+            + '<div class="btns">' + cardButtons(p) + '</div>'
+            + '</div>';
+        }).join('') + '</div>';
+        downloadsEl.innerHTML = head + bar + cards;
+      }
+
+      function renderInstallTab() {
+        var head = '<div class="dl-head"><h1>Install & Use</h1><p>Step-by-step installation and setup for each platform.</p></div>';
+        var guides = '<div class="guides">' + PLATFORMS.map(function (p) {
+          var steps = '<ol>' + p.steps.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>';
+          var note = p.note ? '<div class="' + (p.os === 'macOS' || p.os === 'macOS utility' || p.os === 'iOS' ? 'note' : 'warn') + '">' + p.note + '</div>' : '';
+          return '<div class="guide">'
+            + '<div class="os">' + esc(p.os) + '</div>'
+            + '<h3>' + esc(p.title) + '</h3>'
+            + steps + note
+            + '<div class="dl-line">' + cardButtons(p) + '</div>'
+            + '</div>';
+        }).join('') + '</div>';
+        downloadsEl.innerHTML = head + guides;
+      }
+
+      function renderDownloadsView() {
+        dlBtn.classList.add('active');
+        statusEl.hidden = true;
+        contentEl.hidden = true;
+        actionsEl.hidden = true;
+        downloadsEl.hidden = false;
+        downloadsEl.innerHTML = '<div class="tabs">'
+          + '<button class="tab' + (dlTab === 'download' ? ' active' : '') + '" id="tab-download">Downloads</button>'
+          + '<button class="tab' + (dlTab === 'install' ? ' active' : '') + '" id="tab-install">Install & Use</button>'
+          + '</div>';
+        (dlTab === 'download' ? renderDownloadsTab : renderInstallTab)();
+        document.getElementById('tab-download').addEventListener('click', function () { dlTab = 'download'; renderDownloadsView(); });
+        document.getElementById('tab-install').addEventListener('click', function () { dlTab = 'install'; renderDownloadsView(); });
+        if (!releaseData) fetchReleaseData();
+      }
+
+      function fetchReleaseData() {
+        fetch('https://api.github.com/repos/' + user + '/' + repo + '/releases/latest')
+          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+          .then(function (rel) {
+            releaseData = { tag: rel.tag_name, publishedAt: rel.published_at, assets: {} };
+            (rel.assets || []).forEach(function (a) { releaseData.assets[a.name] = a.size; });
+            if (dlTab === 'download' && !downloadsEl.hidden) renderDownloadsTab();
+          })
+          .catch(function () { /* keep static links; sizes stay hidden */ });
+      }
+
+      // ---- post rendering (unchanged behaviour) ----
       function currentFile() {
         var h = location.hash.replace(/^#\/?/, '');
-        if (h) return h;
+        if (h && h !== 'downloads') return h;
         return posts.length ? posts[0].file : null;
       }
 
       function renderList(activeFile) {
         var q = filterEl.value.trim().toLowerCase();
-        listEl.innerHTML = '';
+        listEl.innerHTML = '<div class="aside-label">Changelog posts</div>'
+          + '<a class="nav-link' + (isDownloads() ? ' active' : '') + '" href="#/downloads">&#8681; Download</a>';
         var shown = 0;
         posts.forEach(function (p) {
           if (q && (p.title + ' ' + p.file).toLowerCase().indexOf(q) === -1) return;
           shown++;
           var a = document.createElement('a');
-          a.className = 'post-link' + (p.file === activeFile ? ' active' : '');
+          a.className = 'post-link' + (p.file === activeFile && !isDownloads() ? ' active' : '');
           a.href = '#/' + encodeURIComponent(p.file);
           a.textContent = p.title;
           var s = document.createElement('small');
@@ -154,7 +385,11 @@
         }
       }
 
+      function isDownloads() { return location.hash.replace(/^#\/?/, '') === 'downloads'; }
+
       function showPost(file) {
+        dlBtn.classList.remove('active');
+        downloadsEl.hidden = true;
         statusEl.hidden = false;
         statusEl.textContent = 'Loading "' + file + '"…';
         contentEl.hidden = true;
@@ -176,7 +411,7 @@
             actionsEl.innerHTML =
               (p && p.date ? '<span class="pill">' + p.date + '</span>' : '') +
               '<a href="posts/' + encodeURIComponent(file) + '">Source</a>' +
-              '<a href="https://github.com/' + user + '/' + repo + '/edit/main/posts/' + encodeURIComponent(file) + '">Edit on GitHub</a>' +
+              '<a href="' + base + '/edit/main/posts/' + encodeURIComponent(file) + '">Edit on GitHub</a>' +
               '<span style="margin-left:auto">— press <b>+</b> above, then "Create new file"</span>';
             renderList(file);
           })
@@ -186,6 +421,12 @@
       }
 
       function route() {
+        if (isDownloads()) {
+          document.title = 'Downloads — Changelog FlipFlip+';
+          renderDownloadsView();
+          renderList(null);
+          return;
+        }
         var file = currentFile();
         if (!file) {
           statusEl.textContent = 'No posts yet. Add a file to posts/ and push.';
@@ -205,6 +446,7 @@
         })
         .catch(function (e) {
           statusEl.textContent = 'Failed to load manifest.json (' + e.message + '). Deploy may still be running — refresh in a moment.';
+          route();
         });
     })();
   </script>

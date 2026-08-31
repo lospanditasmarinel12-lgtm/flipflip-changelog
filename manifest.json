@@ -1,6 +1,12 @@
 {
   "posts": [
     {
+      "file": "2026-08-31-test-post.md",
+      "title": "FlipFlip 7.0.0 — Coming Soon",
+      "date": "2026-08-31",
+      "excerpt": "A scratch post verifying the automated post publishing flow."
+    },
+    {
       "file": "6-0-0-changelog.md",
       "title": "FlipFlip — Changelog",
       "date": "2026-08-30",

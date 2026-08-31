@@ -230,15 +230,22 @@
           id: 'macos', os: 'macOS', title: 'macOS', sub: 'FlipFlip.app',
           buttons: [
             { label: 'Apple Silicon (arm64)', file: 'FlipFlip-macOS-arm64.zip' },
-            { label: 'Intel (x64)', file: 'FlipFlip-macOS-x64.zip' }
+            { label: 'Intel (x64)', file: 'FlipFlip-macOS-x64.zip' },
+            { label: 'Audio-Setup helper', file: 'FlipFlip-Audio-Setup-macOS.zip' }
           ],
           steps: [
-            'Download the build for your Mac: Apple Silicon (M1/M2/M3/M4) or Intel.',
+            'Download the build for your Mac: Apple Silicon (arm64) or Intel (x64). If you plan to use haptics on system audio, also grab the <b>Audio-Setup helper</b> below.',
             'Unzip the archive and drag <code>FlipFlip.app</code> into <code>Applications</code>.',
             'First launch: <b>right-click the app and choose Open</b> instead of double-clicking (the app is ad-hoc signed, so Gatekeeper shows a warning the first time).',
-            'Optional — haptics on system audio: see the note below.'
+            'Optional — haptics on <b>system audio</b>:',
+            'Install <b>BlackHole 2ch</b> (<code>brew install blackhole-2ch</code>, or the installer from existentialaudio.com/blackhole).',
+            'If BlackHole was just installed, <b>restart the Mac</b> (or run <code>sudo killall coreaudiod</code>) so Core Audio loads the driver.',
+            'Optional: unzip <code>FlipFlip-Audio-Setup-macOS.zip</code> and run <code>FlipFlip-Audio-Setup.command</code> — its menu checks BlackHole, shows install instructions, and troubleshoots a silent capture. It no longer needs to create the "FlipFlip Multi-Output" device.',
+            'In FlipFlip set <b>Audio Source = System Audio</b>. When macOS asks, <b>allow Microphone for FlipFlip</b> (System Settings → Privacy &amp; Security → Microphone) — this is required so FlipFlip can capture.',
+            'FlipFlip now routes your Mac’s output to BlackHole automatically and plays it back to your own speakers/AirPods.',
+            'Turn <b>System Audio off</b> when done — output returns to normal. If "No audio detected": make sure something is playing, toggle System Audio off/on, or use <b>Fix Audio Routing</b> in the Haptic card.'
           ],
-          note: 'Why the Audio-Setup helper exists: macOS does not allow an app to silently capture system audio. For System-audio haptics, FlipFlip routes system output through the free <b>BlackHole 2ch</b> virtual driver, then plays it back to your speakers through a "FlipFlip Multi-Output" device. Install <code>brew install blackhole-2ch</code> (or the installer from existentialaudio.com/blackhole), download and run the <b>Audio-Setup</b> helper once (it checks BlackHole and creates "FlipFlip Multi-Output"), then set Audio Source = System Audio in FlipFlip. Toggle it off and normal output resumes. Regular music playback needs none of this.'
+          note: 'Why the helper exists: macOS does not allow an app to silently capture system-wide audio. FlipFlip routes system output through the free <b>BlackHole 2ch</b> virtual driver and plays it back to your own speakers/AirPods from inside the app — the old "FlipFlip Multi-Output" device is no longer created or needed. The only requirements are BlackHole installed and the Microphone permission. Regular music playback needs none of this.'
         },
         {
           id: 'windows', os: 'Windows', title: 'Windows', sub: 'Portable — no installer',
@@ -281,16 +288,6 @@
             'For System-audio haptics, start a screen Broadcast from Control Center (ReplayKit) as FlipFlip asks.'
           ],
           note: 'Because the IPA is development-signed, sideloaders re-sign it with your Apple ID. With services like Sideloadly/AltStore you may need to re-install every 7 days. The ReplayKit Broadcast extension shows the red recording banner while active.'
-        },
-        {
-          id: 'audio', os: 'macOS utility', title: 'Audio-Setup', sub: 'One-time system-audio helper',
-          buttons: [ { label: 'Helper', file: 'FlipFlip-Audio-Setup-macOS.zip' } ],
-          steps: [
-            'Download <code>FlipFlip-Audio-Setup-macOS.zip</code>.',
-            'Install <b>BlackHole 2ch</b> first (<code>brew install blackhole-2ch</code> or the installer from existentialaudio.com/blackhole).',
-            'Unzip the archive and run <code>FlipFlip-Audio-Setup.command</code> — it checks for BlackHole and creates the "FlipFlip Multi-Output" device.',
-            'Then in FlipFlip choose Audio Source = System Audio. Turn it off to restore normal output.'
-          ]
         }
       ];
 

@@ -2,15 +2,15 @@
   "posts": [
     {
       "file": "6-0-0-changelog.md",
-      "title": "FlipFlip — Everything We Built Together",
-      "date": "",
-      "excerpt": "What changed versus the original FlipFlip master v3.2.2, 2023"
+      "title": "FlipFlip — Changelog",
+      "date": "2026-08-30",
+      "excerpt": "Every upgrade, fix and new feature introduced since the original FlipFlip master (v3.2.2)."
     },
     {
       "file": "three-way-comparison.md",
-      "title": "FlipFlip — Three-Way Comparison: Master vs Electron vs Capacitor",
-      "date": "",
-      "excerpt": "Doc-based audit built from the design/plan/report md files in each repo no code parse."
+      "title": "FlipFlip — Three-Way Comparison",
+      "date": "2026-08-30",
+      "excerpt": "Technical mapping of Master vs Electron vs Capacitor — upgrades, fixes, improvements and new features per branch."
     }
   ]
 }

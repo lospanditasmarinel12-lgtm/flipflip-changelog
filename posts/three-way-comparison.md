@@ -1,3 +1,9 @@
+---
+title: FlipFlip — Three-Way Comparison
+date: 2026-08-30
+description: Technical mapping of Master vs Electron vs Capacitor — upgrades, fixes, improvements and new features per branch.
+---
+
 # FlipFlip — Three-Way Comparison: Master vs Electron vs Capacitor
 
 *Doc-based audit built from the design/plan/report md files in each repo (no code parse).*

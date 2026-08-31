@@ -1,30 +1,35 @@
-# FlipFlip — Everything We Built Together
+---
+title: FlipFlip — Changelog
+date: 2026-08-30
+description: Every upgrade, fix and new feature introduced since the original FlipFlip master (v3.2.2).
+---
 
-*What changed versus the original FlipFlip `master` (v3.2.2, 2023)*
+# FlipFlip — Changelog
 
-This is a plain-language account of all the upgrades, fixes, improvements and brand-new
-features we shipped together across two branches:
+*Changes relative to the original FlipFlip `master` (v3.2.2, 2023)*
 
-- **Flip-Electron** — the modern desktop app (Windows / macOS / Linux)
-- **flipflip-capacitor** — the new mobile app (iOS / Android)
+This document summarizes the upgrades, fixes, improvements, and new features introduced
+across two branches:
 
-Everything below is work that does **not exist in the original master branch**. Both
-branches are versioned **6.0.0**.
+- **Flip-Electron** — the desktop app (Windows / macOS / Linux)
+- **flipflip-capacitor** — the mobile app (iOS / Android)
+
+The work described below does **not exist in the original master branch**. Both branches
+are versioned **6.0.0**.
 
 ---
 
-## In one paragraph
+## Overview
 
-We took FlipFlip out of a 2019-era toolchain (Electron 4, React 17, Webpack 4) and rebuilt it
-on modern foundations (Electron 28–43 / React 18 / MUI 6 / Webpack 5 / TypeScript 5), added a
-whole new audio-reactive **haptic feedback** system, rewrote the playback engine to be far
-lighter on memory, took the app to **real phone apps** for iOS and Android, reworked the
-scrapers to the ones that still work today, and fixed a long list of leaks and performance
-bugs along the way.
+FlipFlip has been rebuilt from a 2019-era toolchain (Electron 4, React 17, Webpack 4) onto
+modern foundations (Electron 28–43 / React 18 / MUI 6 / Webpack 5 / TypeScript 5). The release
+introduces a new audio-reactive **haptic feedback** system, a playback engine with a much
+lighter memory footprint, **native iOS and Android apps**, an updated set of remote sources
+that remain functional in 2026, and a long list of memory-leak and performance fixes.
 
 ---
 
-## 1. The modernization (what we upgraded the stack to)
+## 1. Platform modernization
 
 These are the foundation changes that made everything else possible.
 
@@ -45,11 +50,11 @@ These are the foundation changes that made everything else possible.
 
 ---
 
-## 2. Brand-new playback engine ("Live Show")
+## 2. New playback engine (Live Show)
 
-We replaced the classic `ImagePlayer`/`PictureGrid` preloading pipeline with a new engine:
+The classic `ImagePlayer`/`PictureGrid` preloading pipeline has been replaced with a new engine:
 
-- **One live media element** walks a single prebuilt queue — no more hoarding decoded images.
+- **One live media element** walks a single prebuilt queue, ending the practice of holding many decoded images in memory.
 - **Destroy-on-advance** decoding: the moment an item is shown, its decoded buffer is released so memory becomes garbage-collectable.
 - **Preload exactly one image ahead** (videos/nimja never), with token-guarded decode.
 - **Back/forth** keeps only the immediately-previous item alive; older ones rebuild from the URL queue.
@@ -60,7 +65,7 @@ We replaced the classic `ImagePlayer`/`PictureGrid` preloading pipeline with a n
 
 ---
 
-## 3. Haptic feedback (big new feature)
+## 3. Haptic feedback
 
 Haptic devices (any BLE toy that speaks the Buttplug protocol) now vibrate **in sync with audio**.
 
@@ -73,18 +78,18 @@ Haptic devices (any BLE toy that speaks the Buttplug protocol) now vibrate **in 
   - Linux: PipeWire/PulseAudio monitor.
 - Reliability fixes that matter in real use:
   - Watchdog + command timeout so a hung Bluetooth write can never freeze feedback permanently.
-  - Command throttling so we don't flood the toy (~31 commands/sec → 5/sec heartbeats).
+  - Command throttling to avoid flooding the device (~31 → 5 commands/sec heartbeats).
   - **Release-on-zero** — pausing or a beat gap actually stops the toy (BLE toys hold their last intensity forever otherwise).
   - Adaptive melody with auto-gain, so low system volume still reads with full dynamics; source-status no longer flaps between "LIVE" and "No audio detected".
 
 ---
 
-## 4. Mobile — FlipFlip is now an iPhone and Android app
+## 4. Mobile platforms (iOS & Android)
 
-The Capacitor branch turned the desktop app into real mobile apps.
+The Capacitor branch brings FlipFlip to iOS and Android.
 
 - **iOS and Android projects** wired to the web app, with safe-area handling, splash screen and proper app storage.
-- **Native media optimizer** (`flipflip-transcoder`, iOS + Android): heavy camera files (HDR, >1080p, HEIC/HEIF, >8 MB) are converted to **SDR 1080p** on import so slideshows run smooth on a phone — and only the converted copy is kept.
+- **Native media optimizer** (`flipflip-transcoder`, iOS + Android): heavy camera files (HDR, >1080p, HEIC/HEIF, >8 MB) are converted to **SDR 1080p** on import so slideshows run smoothly on mobile — and only the converted copy is kept.
 - **Native audio player plugin** (`flipflip-audio-player`) for reliable on-device playback.
 - **Import UX built for phones**: picks open the OS photo library / Files chooser directly; imports are content-addressed, so re-picking the same file never duplicates storage.
 - **System-audio capture on mobile** via a native sidecar meter that feeds the same haptic pipeline:
@@ -93,9 +98,10 @@ The Capacitor branch turned the desktop app into real mobile apps.
 
 ---
 
-## 5. Remote sources — kept working, cut the dead weight
+## 5. Remote sources
 
-The internet changed a lot since master; we kept the scrapers that still work and removed the ones that died.
+The scraper landscape has changed since master; the sources that remain functional are
+retained, and those backed by discontinued APIs have been removed.
 
 - **Ported and re-tested:** e621, Danbooru, Safebooru/Booru API, Gelbooru, Rule34, EHentai, Luscious, BDSMlr, Hydrus, Piwigo (+ Piwigo import dialog and a new compact Remote Sources settings card).
 - The old giant scraper file was split into clean per-source modules that are far easier to maintain.
@@ -113,9 +119,9 @@ The internet changed a lot since master; we kept the scrapers that still work an
 
 ---
 
-## 7. Long list of bug fixes and performance fixes
+## 7. Bug fixes & performance
 
-Things that were leaking, freezing, or slow in master, now fixed:
+Issues that leaked memory, froze, or degraded performance in master are now addressed:
 
 **Memory leaks (the big ones)**
 - Web workers created on every scene switch were **never terminated** → now `.terminate()` on every path, and workers are no longer shared module globals.
@@ -145,11 +151,11 @@ Things that were leaking, freezing, or slow in master, now fixed:
 
 ---
 
-## 8. A note on version history
+## 8. Version history
 
-Master's own changelog ends at v3.2.2 (June 2023). All of the above is what we added on top —
-running through **6.0.0** on both branches, with signed Android APK/AAB, a sideloadable iOS
-`.ipa`, and packaged macOS arm64/x64 apps.
+The original changelog ends at v3.2.2 (June 2023). This project continues from that point
+through **6.0.0** on both branches, with signed Android APK/AAB, a sideloadable iOS `.ipa`,
+and packaged macOS arm64/x64 apps.
 
 ---
 
@@ -161,9 +167,9 @@ running through **6.0.0** on both branches, with signed Android APK/AAB, a sidel
   offload is on the roadmap).
 - iOS system-audio capture only works while the user starts a screen Broadcast (Apple
   sandbox limitation — no app can silently capture another app's audio on iOS).
-- Haptic toys are a nice-to-have: everything degrades gracefully with no device connected.
+- Haptic devices are optional: the app degrades gracefully when none are connected.
 
 ---
 
-*Work done together across the Flip-Electron and flipflip-capacitor branches. Both are version
-6.0.0 and share the same feature set where the platform allows it.*
+*Release covers the Flip-Electron and flipflip-capacitor branches. Both are version 6.0.0 and
+share the same feature set where the platform allows it.*

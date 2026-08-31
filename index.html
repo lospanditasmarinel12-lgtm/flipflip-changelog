@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Changelog FlipFlip+</title>
+  <meta name="description" content="Changelog site for FlipFlip — every upgrade, fix and new feature, tracked per version.">
+  <link rel="stylesheet" href="github-markdown.min.css">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 12px 20px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
+    .brand span { color: var(--accent); }
+    #filter {
+      width: min(320px, 50vw);
+      padding: 7px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+    }
+    #filter:focus { outline: none; border-color: var(--accent); }
+
+    .body { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100% - 57px); }
+
+    aside {
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+      overflow-y: auto;
+      background: var(--panel);
+    }
+    .post-link {
+      display: block; padding: 9px 12px; margin-bottom: 6px;
+      border-radius: 6px; border: 1px solid transparent;
+      color: var(--text); font-size: 14px; line-height: 1.4;
+    }
+    .post-link:hover { background: var(--bg); text-decoration: none; border-color: var(--border); }
+    .post-link.active { background: var(--bg); border-color: var(--accent); }
+    .post-link small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .empty { color: var(--muted); font-size: 13px; padding: 8px 12px; }
+
+    main { padding: 28px; max-width: 960px; width: 100%; margin: 0 auto; }
+    #content.markdown-body { background: transparent; padding: 0; color: var(--text); }
+    .meta-actions {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--muted);
+    }
+    .pill { border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; }
+    #status { color: var(--muted); }
+
+    @media (max-width: 760px) {
+      .body { grid-template-columns: 1fr; }
+      aside { border-right: none; border-bottom: 1px solid var(--border); max-height: 30vh; overflow-y: auto; }
+      #filter { width: 45vw; }
+      main { padding: 18px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">Changelog <span>FlipFlip+</span></div>
+    <input id="filter" type="search" placeholder="Filter posts…" autocomplete="off" aria-label="Filter posts">
+  </header>
+
+  <div class="body">
+    <aside id="list"></aside>
+
+    <main>
+      <div id="status">Loading manifest…</div>
+      <article id="content" class="markdown-body" hidden></article>
+      <div id="actions" class="meta-actions" hidden></div>
+    </main>
+  </div>
+
+  <script src="marked.min.js"></script>
+  <script>
+    (function () {
+      // ---- site identity (adapts automatically to repo/username renames) ----
+      var user = location.hostname.split('.')[0];
+      var pathParts = location.pathname.split('/').filter(Boolean);
+      var repo = pathParts.length ? pathParts[0] : 'flipflip-changelog';
+
+      // ---- safe rendering: no raw HTML from posts ----
+      var renderer = new marked.Renderer();
+      renderer.html = function (html) {
+        return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      };
+      marked.setOptions({ gfm: true, breaks: true });
+      marked.use({ renderer: renderer });
+
+      var listEl = document.getElementById('list');
+      var statusEl = document.getElementById('status');
+      var contentEl = document.getElementById('content');
+      var actionsEl = document.getElementById('actions');
+      var filterEl = document.getElementById('filter');
+
+      var posts = [];
+      var current = null;
+
+      function currentFile() {
+        var h = location.hash.replace(/^#\/?/, '');
+        if (h) return h;
+        return posts.length ? posts[0].file : null;
+      }
+
+      function renderList(activeFile) {
+        var q = filterEl.value.trim().toLowerCase();
+        listEl.innerHTML = '';
+        var shown = 0;
+        posts.forEach(function (p) {
+          if (q && (p.title + ' ' + p.file).toLowerCase().indexOf(q) === -1) return;
+          shown++;
+          var a = document.createElement('a');
+          a.className = 'post-link' + (p.file === activeFile ? ' active' : '');
+          a.href = '#/' + encodeURIComponent(p.file);
+          a.textContent = p.title;
+          var s = document.createElement('small');
+          s.textContent = p.date ? p.date + ' · ' + p.file : p.file;
+          a.appendChild(s);
+          listEl.appendChild(a);
+        });
+        if (shown === 0) {
+          var d = document.createElement('div');
+          d.className = 'empty';
+          d.textContent = 'No posts match the filter.';
+          listEl.appendChild(d);
+        }
+      }
+
+      function showPost(file) {
+        statusEl.hidden = false;
+        statusEl.textContent = 'Loading "' + file + '"…';
+        contentEl.hidden = true;
+        actionsEl.hidden = true;
+        if (current === file) current = null; // force reload even on same file hash click
+
+        fetch('posts/' + file)
+          .then(function (r) {
+            if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+            return r.text();
+          })
+          .then(function (md) {
+            var p = posts.filter(function (x) { return x.file === file; })[0];
+            contentEl.innerHTML = marked.parse(md || '*(empty post)*');
+            document.title = (p ? p.title + ' — ' : '') + 'Changelog FlipFlip+';
+            statusEl.hidden = true;
+            contentEl.hidden = false;
+            actionsEl.hidden = false;
+            actionsEl.innerHTML =
+              (p && p.date ? '<span class="pill">' + p.date + '</span>' : '') +
+              '<a href="posts/' + encodeURIComponent(file) + '">Source</a>' +
+              '<a href="https://github.com/' + user + '/' + repo + '/edit/main/posts/' + encodeURIComponent(file) + '">Edit on GitHub</a>' +
+              '<span style="margin-left:auto">— press <b>+</b> above, then "Create new file"</span>';
+            renderList(file);
+          })
+          .catch(function (e) {
+            statusEl.textContent = 'Could not load "' + file + '": ' + e.message;
+          });
+      }
+
+      function route() {
+        var file = currentFile();
+        if (!file) {
+          statusEl.textContent = 'No posts yet. Add a file to posts/ and push.';
+          return;
+        }
+        showPost(file);
+      }
+
+      // ---- boot ----
+      fetch('manifest.json')
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function (m) {
+          posts = (m && m.posts) || [];
+          window.addEventListener('hashchange', route);
+          filterEl.addEventListener('input', function () { renderList(currentFile()); });
+          route();
+        })
+        .catch(function (e) {
+          statusEl.textContent = 'Failed to load manifest.json (' + e.message + '). Deploy may still be running — refresh in a moment.';
+        });
+    })();
+  </script>
+</body>
+</html>

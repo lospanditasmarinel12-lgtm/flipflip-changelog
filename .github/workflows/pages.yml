@@ -1,0 +1,39 @@
+# Deploy Changelog FlipFlip+ to GitHub Pages
+# Runs on every push to main and manually. Regenerates manifest.json
+# (the post index) so new/edited files in posts/ appear automatically.
+name: Deploy changelog site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build site index (manifest.json)
+        run: node make-manifest.mjs
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

@@ -29,10 +29,25 @@
 
     header {
       position: sticky; top: 0; z-index: 10;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      padding: 12px 20px;
       background: var(--panel);
       border-bottom: 1px solid var(--border);
+    }
+    .bar {
+      display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: center;
+      padding: 7px 16px; font-size: 13px;
+      background: linear-gradient(90deg, rgba(88,166,255,.10), rgba(46,160,67,.10), rgba(88,166,255,.10));
+      border-bottom: 1px solid var(--border);
+    }
+    .bar .kofi {
+      display: inline-block; padding: 2px 10px; border-radius: 20px;
+      border: 1px solid var(--accent); color: var(--accent); font-weight: 700; font-size: 12.5px;
+      white-space: nowrap;
+    }
+    .bar .kofi:hover { background: rgba(88,166,255,.12); text-decoration: none; }
+    .bar .bar-sep { color: var(--muted); }
+    .header-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 12px 20px;
     }
     .brand { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
     .brand span { color: var(--accent); }
@@ -142,7 +157,8 @@
       .body { grid-template-columns: 1fr; }
       aside { border-right: none; border-bottom: 1px solid var(--border); max-height: 30vh; overflow-y: auto; }
       #filter { width: 44vw; }
-      header { flex-wrap: wrap; }
+      .bar { justify-content: flex-start; }
+      .header-row { flex-wrap: wrap; }
       main { padding: 18px 14px; }
       .cards { grid-template-columns: 1fr; }
     }
@@ -151,10 +167,19 @@
 <body>
 
   <header>
-    <div class="brand">Changelog <span>FlipFlip+</span></div>
-    <div class="header-right">
-      <a id="download-btn" href="#/downloads">&#8681; Download</a>
-      <input id="filter" type="search" placeholder="Filter posts…" autocomplete="off" aria-label="Filter posts">
+    <div class="bar">
+      Support the original developer
+      <a class="kofi" href="https://ko-fi.com/flipflipapp" target="_blank" rel="noopener noreferrer">https://ko-fi.com/flipflipapp</a>
+      <span class="bar-sep">·</span>
+      Enjoying the new features and changes? Consider donating to me as well
+      <a class="kofi" href="https://ko-fi.com/alejanky" target="_blank" rel="noopener noreferrer">https://ko-fi.com/alejanky</a>
+    </div>
+    <div class="header-row">
+      <div class="brand">Changelog <span>FlipFlip+</span></div>
+      <div class="header-right">
+        <a id="download-btn" href="#/downloads">&#8681; Download</a>
+        <input id="filter" type="search" placeholder="Filter posts…" autocomplete="off" aria-label="Filter posts">
+      </div>
     </div>
   </header>
 
@@ -284,6 +309,9 @@
       }
 
       var releaseData = null; // { tag, publishedAt, assets: {name: size} }
+      var releaseFailed = false;
+
+      function dlContent() { return document.getElementById('dl-content'); }
 
       // ---- downloads / install rendering ----
       function cardButtons(p) {
@@ -294,11 +322,23 @@
         }).join('');
       }
 
+      function releaseBar() {
+        var all = '<a class="btn" href="' + base + '/releases" target="_blank" rel="noopener">All releases</a>';
+        if (releaseData) {
+          return '<div class="release-bar"><b>Latest release:</b> <span>'
+            + esc(releaseData.tag) + ' <span class="muted">· published ' + fmtDate(releaseData.publishedAt) + '</span>'
+            + '</span><span class="spacer"></span>' + all + '</div>';
+        }
+        if (releaseFailed) {
+          return '<div class="release-bar"><b>Latest release:</b> <span class="muted">unavailable</span>'
+            + '<span class="muted">Could not reach the GitHub API — the buttons below always download the newest release.</span>'
+            + '<span class="spacer"></span>' + all + '</div>';
+        }
+        return '<div class="release-bar"><b>Latest release:</b> <span>Loading…</span><span class="spacer"></span>' + all + '</div>';
+      }
+
       function renderDownloadsTab() {
         var head = '<div class="dl-head"><h1>Downloads</h1><p>Latest release for every platform. All files are hosted in the GitHub Releases of this repository — every version stays available.</p></div>';
-        var bar = '<div class="release-bar"><b>Latest release:</b> <span>'
-          + (releaseData ? esc(releaseData.tag) + ' <span class="muted">· published ' + fmtDate(releaseData.publishedAt) + '</span>' : 'Loading…')
-          + '</span><span class="spacer"></span><a class="btn" href="' + base + '/releases" target="_blank" rel="noopener">All releases</a></div>';
         var cards = '<div class="cards">' + PLATFORMS.map(function (p) {
           return '<div class="card">'
             + '<div class="os">' + esc(p.os) + '</div>'
@@ -308,7 +348,7 @@
             + '<div class="btns">' + cardButtons(p) + '</div>'
             + '</div>';
         }).join('') + '</div>';
-        downloadsEl.innerHTML = head + bar + cards;
+        dlContent().innerHTML = head + releaseBar() + cards;
       }
 
       function renderInstallTab() {
@@ -323,7 +363,7 @@
             + '<div class="dl-line">' + cardButtons(p) + '</div>'
             + '</div>';
         }).join('') + '</div>';
-        downloadsEl.innerHTML = head + guides;
+        dlContent().innerHTML = head + guides;
       }
 
       function renderDownloadsView() {
@@ -333,24 +373,43 @@
         actionsEl.hidden = true;
         downloadsEl.hidden = false;
         downloadsEl.innerHTML = '<div class="tabs">'
-          + '<button class="tab' + (dlTab === 'download' ? ' active' : '') + '" id="tab-download">Downloads</button>'
-          + '<button class="tab' + (dlTab === 'install' ? ' active' : '') + '" id="tab-install">Install & Use</button>'
-          + '</div>';
+          + '<button class="tab' + (dlTab === 'download' ? ' active' : '') + '" data-dl="download">Downloads</button>'
+          + '<button class="tab' + (dlTab === 'install' ? ' active' : '') + '" data-dl="install">Install &amp; Use</button>'
+          + '</div>'
+          + '<div id="dl-content"></div>';
         (dlTab === 'download' ? renderDownloadsTab : renderInstallTab)();
-        document.getElementById('tab-download').addEventListener('click', function () { dlTab = 'download'; renderDownloadsView(); });
-        document.getElementById('tab-install').addEventListener('click', function () { dlTab = 'install'; renderDownloadsView(); });
         if (!releaseData) fetchReleaseData();
       }
 
+      downloadsEl.addEventListener('click', function (e) {
+        var t = e.target && e.target.closest ? e.target.closest('.tab') : null;
+        if (!t || !t.dataset.dl || t.dataset.dl === dlTab) return;
+        dlTab = t.dataset.dl;
+        renderDownloadsView();
+      });
+
       function fetchReleaseData() {
+        var done = false;
+        var finish = function () { done = true; if (dlTab === 'download' && !downloadsEl.hidden) renderDownloadsTab(); };
+        var timer = setTimeout(function () {
+          if (!done) { releaseFailed = true; finish(); }
+        }, 10000);
         fetch('https://api.github.com/repos/' + user + '/' + repo + '/releases/latest')
           .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
           .then(function (rel) {
+            clearTimeout(timer);
+            if (done) return;
             releaseData = { tag: rel.tag_name, publishedAt: rel.published_at, assets: {} };
             (rel.assets || []).forEach(function (a) { releaseData.assets[a.name] = a.size; });
-            if (dlTab === 'download' && !downloadsEl.hidden) renderDownloadsTab();
+            releaseFailed = false;
+            finish();
           })
-          .catch(function () { /* keep static links; sizes stay hidden */ });
+          .catch(function () {
+            clearTimeout(timer);
+            if (done) return;
+            releaseFailed = true;
+            finish();
+          });
       }
 
       // ---- post rendering (unchanged behaviour) ----

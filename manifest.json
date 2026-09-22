@@ -1,6 +1,12 @@
 {
   "posts": [
     {
+      "file": "2026-09-22-mobile-playback-fixes.md",
+      "title": "FlipFlip+ Mobile — Playback & Transition Fixes",
+      "date": "2026-09-22",
+      "excerpt": "Local and Optimized media now play to the end in the mobile WebView, and scene transitions no longer flash white between items."
+    },
+    {
       "file": "6-0-0-changelog.md",
       "title": "FlipFlip — Changelog",
       "date": "2026-08-30",

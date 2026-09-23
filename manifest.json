@@ -1,6 +1,12 @@
 {
   "posts": [
     {
+      "file": "2026-09-22-fixes-report.md",
+      "title": "FlipFlip — Reported Issues Fixed (09/22/2026)",
+      "date": "2026-09-22",
+      "excerpt": "Every fix from the release-feedback thread plus the full list of mobile (flipflip-capacitor) changes — packaged as 6.1."
+    },
+    {
       "file": "2026-09-22-mobile-playback-fixes.md",
       "title": "FlipFlip+ Mobile — Playback & Transition Fixes",
       "date": "2026-09-22",

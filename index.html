@@ -338,11 +338,12 @@
           buttons: [ { label: 'IPA', file: 'FlipFlip-iOS.ipa' } ],
           steps: [
             'Download <code>FlipFlip-iOS.ipa</code>.',
-            'Sideload it — there is no App Store build yet. Use <b>AltStore</b>, <b>Sideloadly</b> (macOS/Windows) or <b>Feather</b>.',
+            'Sideload it — there is no App Store build yet. Use <b>AltStore</b>, <b>SideStore</b>, <b>Sideloadly</b> (macOS/Windows) or <b>Feather</b>.',
             'The tool re-signs the IPA with your own Apple ID: connect your iPhone, add the .ipa, install it.',
+            '<b>Media Optimization</b> and <b>System-audio haptics</b> need the app installed <b>with its app extensions</b> (the Broadcast extension). AltStore/SideStore include them automatically; with Sideloadly/Feather make sure the extension is enabled when re-signing.',
             'For System-audio haptics, start a screen Broadcast from Control Center (ReplayKit) as FlipFlip asks.'
           ],
-          note: 'Because the IPA is development-signed, sideloaders re-sign it with your Apple ID. With services like Sideloadly/AltStore you may need to re-install every 7 days. The ReplayKit Broadcast extension shows the red recording banner while active.'
+          note: 'Because the IPA is development-signed, sideloaders re-sign it with your Apple ID. With services like Sideloadly/AltStore you may need to re-install every 7 days. The ReplayKit Broadcast extension shows the red recording banner while active and only works if it was installed <b>with the app</b>. Easiest way: add the official source in <b>AltStore/SideStore → Settings → Sources → +</b> <code>https://lospanditasmarinel12-lgtm.github.io/flipflip-changelog/flipflip-altstore.json</code>, then install FlipFlip from the source tab — extensions are always included. (<a href="https://lospanditasmarinel12-lgtm.github.io/flipflip-changelog/flipflip-altstore.json" target="_blank" rel="noopener">open the source JSON</a>)'
         }
       ];
 

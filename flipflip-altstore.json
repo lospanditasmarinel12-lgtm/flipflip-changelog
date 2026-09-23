@@ -1,0 +1,45 @@
+{
+  "name": "FlipFlip",
+  "identifier": "com.flipflip.app.altstore-source",
+  "sourceURL": "https://lospanditasmarinel12-lgtm.github.io/flipflip-changelog/flipflip-altstore.json",
+  "apps": [
+    {
+      "name": "FlipFlip",
+      "bundleIdentifier": "com.flipflip.app",
+      "developerName": "FlipFlip",
+      "subtitle": "Slideshow player with audio-reactive haptics",
+      "localizedDescription": "FlipFlip is a fast, memory-light media player for images, video and audio. It pairs with Buttplug-compatible (BLE) haptic toys that vibrate in sync with your audio, on-device media optimization for mobile, and remote gallery sources. Development-signed build — AltStore/SideStore re-signs it with your own Apple ID on install.",
+      "iconURL": "https://lospanditasmarinel12-lgtm.github.io/flipflip-changelog/flipflip-app-icon.png",
+      "tintColor": "#58a6ff",
+      "versions": [
+        {
+          "version": "6.1.0",
+          "date": "2026-09-22",
+          "localizedDescription": "Mobile playback, transition and transcoding fixes; new system-audio capture path for iOS.",
+          "downloadURL": "https://github.com/lospanditasmarinel12-lgtm/flipflip-changelog/releases/latest/download/FlipFlip-iOS.ipa",
+          "size": 10124861,
+          "sha256": "8ca4f01e4945fd5d149e681423daf0ec6808c44cc02f7d27121ec2c56947f572",
+          "minOSVersion": "15.0",
+          "type": "iOSApp"
+        }
+      ],
+      "appExtensions": [
+        {
+          "name": "FlipFlip Broadcast Extension",
+          "bundleIdentifier": "com.flipflip.app.BroadcastExtension",
+          "versions": [
+            {
+              "version": "6.1.0",
+              "date": "2026-09-22",
+              "downloadURL": "https://github.com/lospanditasmarinel12-lgtm/flipflip-changelog/releases/latest/download/FlipFlip-iOS.ipa",
+              "size": 10124861,
+              "sha256": "8ca4f01e4945fd5d149e681423daf0ec6808c44cc02f7d27121ec2c56947f572",
+              "minOSVersion": "15.0"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "news": []
+}

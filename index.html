@@ -308,10 +308,11 @@
           steps: [
             'Download <code>FlipFlip-Windows-x64.zip</code>.',
             'Extract the archive to any folder (for example <code>C:\\FlipFlip</code>).',
-            'Run <code>FlipFlip.exe</code>. Optionally right-click it → Pin to Start or create a shortcut.',
+            'Open that folder and run <code>FlipFlip.exe</code> — it sits right at the top level of the extracted files, next to the <code>.dll</code> files, with no extra subfolder.',
+            'Optionally right-click <code>FlipFlip.exe</code> → Pin to Start or create a shortcut.',
             'System-audio haptics are built in (WASAPI loopback) — no extra driver or helper needed.'
           ],
-          note: 'Requires Windows 10 or 11 (64-bit).'
+          note: 'Requires Windows 10 or 11 (64-bit). The app is not code-signed, so Windows SmartScreen shows a blue "Windows protected your PC" warning on first launch — click <b>More info</b> → <b>Run anyway</b> to start it.'
         },
         {
           id: 'linux', os: 'Linux', title: 'Linux', sub: 'AppImage — good to go',
